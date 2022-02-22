@@ -1,0 +1,28 @@
+Parameters:
+  DBName:
+    Type: String
+  MUser:
+    Type: String
+  MPass:
+    Type: String
+
+Resources:
+  MySqlInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref DBName
+      MasterUsername: !Ref MUser
+      MasterUserPassword: !Ref MPass
+      Engine: MySQL
+      DBInstanceClass: db.t2.micro
+      StorageType: gp2
+      PubliclyAccessible: True
+      AllocatedStorage: "20"
+      DBInstanceIdentifier: !Join ["-", [ "MyDbInstance", !Ref "AWS::Region" ]]
+      AvailabilityZone: "us-east-1a"
+  MyDbSecurityByCIDRIPGroup:
+    Type: AWS::RDS::DBSecurityGroup
+    Properties:
+      GroupDescription: Ingress for CIDRIP
+      DBSecurityGroupIngress:
+        CIDRIP: "181.140.61.157/32"
