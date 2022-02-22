@@ -1,0 +1,62 @@
+trigger:
+  branches:
+   include:
+   - main
+   - feature/*
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    name: PersonaAgents
+    demands:
+    - Agent.name -equals agent_ppal
+  steps:
+  - checkout: self
+  - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@5
+    displayName: 'Prepare analysis on SonarQube'
+    inputs:
+      SonarQube: 'SonarQube_Edwin'
+      scannerMode: CLI
+      configMode: manual
+      cliProjectKey: 'DevOps_learnig_countries'
+      cliProjectName: countries
+      cliProjectVersion: '$(Build.BuildNumber)'
+      cliSources: $(Build.SourcesDirectory)
+      extraProperties: |       
+        sonar.verbose=true
+        sonar.sources=$(Build.SourcesDirectory)/domain/use_cases/,$(Build.SourcesDirectory)/infraestructure/driven_adapters/
+        sonar.tests=$(Build.SourcesDirectory)/unit_tests/
+        sonar.python.coverage.reportPaths=coverage.xml
+        sonar.language=python        
+        sonar.exclusions=/domain/models/**,/domain/use_cases/utils/**,.coveragerc, __*__.py ,**/out_report.xml,**/coverage.xml,**/__init__.py
+        sonar.python.xunit.reportPath=$(Build.SourcesDirectory)/out_report.xml
+        sonar.python.coverage.reportPaths=$(Build.SourcesDirectory)/coverage.xml
+  
+  - script: |
+      python -m coverage run -m pytest -v --junitxml=out_report.xml
+      python -m coverage report -m
+      python -m coverage xml
+    displayName: 'Run Unit Test'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+  
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/out*.xml'
+    inputs:
+      testResultsFiles: '**/out*.xml'
+      searchFolder: '$(System.DefaultWorkingDirectory)'    
+  
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage from coverage.xml'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage.xml'  
+  
+  - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@5
+    displayName: 'Run Code Analysis'  
+
+  - task: PublishBuildArtifacts@1
+    displayName: AcceptanceTest artifact
+    inputs:
+      PathtoPublish: $(Build.SourcesDirectory)/acceptance_test
+      ArtifactName: AcceptanceTest
+  
