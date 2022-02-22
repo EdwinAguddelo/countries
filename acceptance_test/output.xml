@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 4.1.3 (Python 3.9.5 on win32)" generated="20220221 20:17:07.535" rpa="false" schemaversion="2">
+<suite id="s1" name="TC GET request" source="C:\Users\edwin\Documents\Repositories\countries\acceptance_test\test_cases\TC_GET_request.robot">
+<kw name="Connect to database origen" library="connection_mysql" type="SETUP">
+<kw name="Connect To Database" library="DatabaseLibrary">
+<var>${output}</var>
+<arg>pymysql</arg>
+<arg>${DBName}</arg>
+<arg>${DBUser}</arg>
+<arg>${DBPass}</arg>
+<arg>${DBHost}</arg>
+<arg>${DBPort}</arg>
+<doc>Loads the DB API 2.0 module given `dbapiModuleName` then uses it to
+connect to the database using `dbName`, `dbUsername`, and `dbPassword`.</doc>
+<msg timestamp="20220221 20:17:07.762" level="INFO">Connecting using : pymysql.connect(db=Line, user=Agudelo, passwd=Alonso210259, host=mydbinstance-us-east-1.crdbvlhqp8np.us-east-1.rds.amazonaws.com, port=3306, charset=None) </msg>
+<msg timestamp="20220221 20:17:08.155" level="INFO">${output} = None</msg>
+<status status="PASS" starttime="20220221 20:17:07.738" endtime="20220221 20:17:08.155"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${output}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20220221 20:17:08.155" endtime="20220221 20:17:08.169"/>
+</kw>
+<kw name="Should Be Equal As Strings" library="BuiltIn">
+<arg>${output}</arg>
+<arg>None</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<msg timestamp="20220221 20:17:08.169" level="INFO">Argument types are:
+&lt;class 'NoneType'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" starttime="20220221 20:17:08.169" endtime="20220221 20:17:08.169"/>
+</kw>
+<status status="PASS" starttime="20220221 20:17:07.738" endtime="20220221 20:17:08.170"/>
+</kw>
+<test id="s1-t1" name="Get_weatherInfo">
+<kw name="Query" library="DatabaseLibrary">
+<var>${output}</var>
+<arg>select * from Log order by consultationDate desc</arg>
+<doc>Uses the input `selectStatement` to query for the values that will be returned as a list of tuples. Set optional
+input `sansTran` to True to run command without an explicit transaction commit or rollback.
+Set optional input `returnAsDict` to True to return values as a list of dictionaries.</doc>
+<msg timestamp="20220221 20:17:08.171" level="INFO">Executing : Query  |  select * from Log order by consultationDate desc </msg>
+<msg timestamp="20220221 20:17:08.314" level="INFO">${output} = ((66, datetime.datetime(2022, 2, 22, 1, 14, 44), "[{'name': 'Macau', 'population_density': 21644.73}, {'name': 'Monaco', 'population_density': 19427.72}, {'name': 'Singapore', 'population_density': 80...</msg>
+<status status="PASS" starttime="20220221 20:17:08.170" endtime="20220221 20:17:08.314"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${output[0][0]}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20220221 20:17:08.314" endtime="20220221 20:17:08.316"/>
+</kw>
+<kw name="GET" library="RequestsLibrary">
+<var>${response}</var>
+<arg>${url}</arg>
+<arg>expected_status=200</arg>
+<doc>Sends a GET request.</doc>
+<msg timestamp="20220221 20:17:09.458" level="INFO">GET Request : url=http://127.0.0.1:5000/top_population_density 
+ path_url=/top_population_density 
+ headers={'User-Agent': 'python-requests/2.27.1', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg timestamp="20220221 20:17:09.458" level="INFO">GET Response : url=http://127.0.0.1:5000/top_population_density 
+ status=200, reason=OK 
+ headers={'Content-Type': 'application/json', 'Content-Length': '298', 'Server': 'Werkzeug/2.0.3 Python/3.9.5', 'Date': 'Tue, 22 Feb 2022 01:17:09 GMT'} 
+ body={"response":[{"name":"Macau","population_density":21644.73},{"name":"Monaco","population_density":19427.72},{"name":"Singapore","population_density":8008.18},{"name":"Hong Kong","population_density":6794.11},{"name":"Gibraltar","population_density":5615.17}],"status_log":"Logged in the database"}
+ 
+ </msg>
+<msg timestamp="20220221 20:17:09.458" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20220221 20:17:08.316" endtime="20220221 20:17:09.458"/>
+</kw>
+<kw name="Query" library="DatabaseLibrary">
+<var>${output2}</var>
+<arg>select * from Log order by consultationDate desc</arg>
+<doc>Uses the input `selectStatement` to query for the values that will be returned as a list of tuples. Set optional
+input `sansTran` to True to run command without an explicit transaction commit or rollback.
+Set optional input `returnAsDict` to True to return values as a list of dictionaries.</doc>
+<msg timestamp="20220221 20:17:09.459" level="INFO">Executing : Query  |  select * from Log order by consultationDate desc </msg>
+<msg timestamp="20220221 20:17:09.617" level="INFO">${output2} = ((67, datetime.datetime(2022, 2, 22, 1, 17, 9), "[{'name': 'Macau', 'population_density': 21644.73}, {'name': 'Monaco', 'population_density': 19427.72}, {'name': 'Singapore', 'population_density': 800...</msg>
+<status status="PASS" starttime="20220221 20:17:09.459" endtime="20220221 20:17:09.617"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${output2[0][0]}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20220221 20:17:09.618" endtime="20220221 20:17:09.619"/>
+</kw>
+<kw name="Should Be True" library="BuiltIn">
+<arg>${output2[0][0]} &gt; ${output[0][0]}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20220221 20:17:09.619" endtime="20220221 20:17:09.621"/>
+</kw>
+<status status="PASS" starttime="20220221 20:17:08.170" endtime="20220221 20:17:09.621"/>
+</test>
+<kw name="Disconnect From Database" library="DatabaseLibrary" type="TEARDOWN">
+<doc>Disconnects from the database.</doc>
+<msg timestamp="20220221 20:17:09.623" level="INFO">Executing : Disconnect From Database</msg>
+<status status="PASS" starttime="20220221 20:17:09.623" endtime="20220221 20:17:09.623"/>
+</kw>
+<status status="PASS" starttime="20220221 20:17:07.537" endtime="20220221 20:17:09.623"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="TC GET request">TC GET request</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
